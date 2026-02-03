@@ -11,22 +11,31 @@ const FilterToolbar = ({ onFilterChange, categories, totalProducts }) => {
   const [maxPrice, setMaxPrice] = useState('');
   const [isControlled, setIsControlled] = useState(true);
 
+  // this is causing a warning where, we are changing from controlled to an uncontrolleg component
+  // We need to avoid changing the searchTerm value from controlled to uncontrolled dynamically.
+  // entire useEffect can be removed.
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsControlled(false);
+      // setIsControlled(false);
     }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
 
+  // this is causing infinite renders because of how this is used in useEffect
+  // any change from the list of deps can keep calling the callback onFilterChange on every change
+  // better to handle this change individually on each change, ex. on searchTerm change, 
+  // after debounced, once we have the final value we can calcualte the filters and call the callback once.
+  // similarly for the other dependencies. 
+  // Need to change the approach entirely, commented out onFilterChange due to infinite renders
   useEffect(() => {
     const filters = {
       search: searchTerm,
       category: selectedCategory,
-      minPrice: minPrice ? parseFloat(minPrice) : null,
-      maxPrice: maxPrice ? parseFloat(maxPrice) : null
+      minPrice: minPrice ? parseFloat(minPrice) : '',
+      maxPrice: maxPrice ? parseFloat(maxPrice) : ''
     };
-    onFilterChange(filters);
+    // onFilterChange(filters);
   }, [searchTerm, selectedCategory, minPrice, maxPrice, onFilterChange]);
 
   const handleReset = () => {
