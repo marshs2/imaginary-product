@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '../../components/ui/Header';
 import PerformanceMonitor from '../../components/ui/PerformanceMonitor';
 import Icon from '../../components/AppIcon';
@@ -10,20 +10,27 @@ const Ebook = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [draggedBlock, setDraggedBlock] = useState(null);
   const [editingBlock, setEditingBlock] = useState(null);
-  const [renderCount, setRenderCount] = useState(0);
+  // const [renderCount, setRenderCount] = useState(0);
 
-  useEffect(() => {
-    setRenderCount(renderCount + 1);
-  });
+  // useEffect(() => {
+  //   setRenderCount(renderCount + 1);
+  // }, [renderCount]);
+  // Can be removed as its just tracking the renderCount which won't need to update the UI.
+  // if needed we can track the same via useRef. And moreover the renderCount is not used anywhere in the UI.
 
-  useEffect(() => {
-    const largeData = generateLargeBlockData(500);
-    
+  let result = useMemo(() => {
     // Simulate blocking synchronous processing
     let result = 0;
     for (let i = 0; i < 100000000; i++) {
       result += Math.sqrt(i);
     }
+    return result;  
+  }, []);
+
+  console.log('Result of complex Synchronous Operation', result);
+
+  useEffect(() => {
+    const largeData = generateLargeBlockData(500);
     
     setBlocks(largeData);
     setIsLoading(false);
@@ -32,10 +39,15 @@ const Ebook = () => {
       console.log('Scrolling...', window.scrollY);
     };
     window.addEventListener('scroll', handleScroll);
-    
-    setInterval(() => {
-      setBlocks(prev => [...prev]);
-    }, 1000);
+
+    // Doesn't seem to serve any purpose other than causing UI jank.
+    // setInterval(() => {
+    //   setBlocks(prev => [...prev]);
+    // }, 1000);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   const handleDragStart = (blockId) => {
@@ -43,7 +55,7 @@ const Ebook = () => {
     setBlocks([...blocks]);
   };
 
-  const handleDragOver = (e, targetId) => {
+  const handleDragOver = (e) => {
     e?.preventDefault();
     setBlocks(prev => {
       const newBlocks = [...prev];
@@ -93,6 +105,7 @@ const Ebook = () => {
   };
 
   const stats = getBlockStats();
+  // Not used? 
 
   if (isLoading) {
     return (
