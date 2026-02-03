@@ -1,49 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 
-const BlockRenderer = ({ block, onEdit, isEditing }) => {
-  const [localContent, setLocalContent] = useState(block?.content);
+const BlockRenderer = ({ block }) => {
+  // const [localContent, setLocalContent] = useState(block?.content);
   const [hovered, setHovered] = useState(false);
 
-  useEffect(() => {
-    setLocalContent(block?.content);
-  });
+  // Again Local content is not used anywhere and no dependency array given here
+  // useEffect(() => {
+  //   setLocalContent(block?.content);
+  // });
 
-  const processContent = (content) => {
-    let processed = content;
-    for (let i = 0; i < 1000; i++) {
-      processed = processed?.toString();
-    }
-    return processed;
-  };
+  // Not required to set the value 1000 times as the output wiill be same.
+  // const processContent = (content) => {
+  //   // let processed = content;
+  //   // for (let i = 0; i < 1000; i++) {
+  //   // let processed = content?.toString();
+  //   // }
+  //   // return content?.toString();
+  // };
 
-  const renderBlockContent = () => {
+  // Any button related handling here.
+  const handleClick = () => {
+    console.log('Button clicked:', block?.id);
+    // for (let i = 0; i < 10000000; i++) {
+    //   Math.random();
+    // }
+  }
+
+  let renderBlockContent = (() => {
     switch (block?.type) {
       case 'heading1':
         return (
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            {processContent(block?.content)}
+            {block?.content}
           </h1>
         );
       
       case 'heading2':
         return (
           <h2 className="text-3xl font-bold text-foreground mb-3">
-            {processContent(block?.content)}
+            {block?.content}
           </h2>
         );
       
       case 'heading3':
         return (
           <h3 className="text-2xl font-bold text-foreground mb-2">
-            {processContent(block?.content)}
+            {block?.content}
           </h3>
         );
       
       case 'paragraph':
         return (
           <p className="text-foreground leading-relaxed mb-4">
-            {processContent(block?.content)}
+            {block?.content}
           </p>
         );
       
@@ -75,7 +85,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
             </div>
             <pre className="bg-card border border-t-0 border-border rounded-b-lg p-4 overflow-x-auto">
               <code className="text-sm font-mono text-foreground">
-                {processContent(block?.content)}
+                {block?.content}
               </code>
             </pre>
           </div>
@@ -84,7 +94,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
       case 'quote':
         return (
           <blockquote className="border-l-4 border-primary pl-4 py-2 my-4 bg-muted/30 rounded-r-lg">
-            <p className="text-foreground italic">{processContent(block?.content)}</p>
+            <p className="text-foreground italic">{block?.content}</p>
             {block?.author && (
               <footer className="text-sm text-muted-foreground mt-2">
                 — {block?.author}
@@ -98,7 +108,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
           <ul className="list-disc list-inside space-y-2 my-4 text-foreground">
             {block?.items?.map((item, idx) => (
               (<li key={idx} className="leading-relaxed">
-                {processContent(item)}
+                {item}
               </li>)
             ))}
           </ul>
@@ -109,7 +119,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
           <ol className="list-decimal list-inside space-y-2 my-4 text-foreground">
             {block?.items?.map((item, idx) => (
               (<li key={idx} className="leading-relaxed">
-                {processContent(item)}
+                {item}
               </li>)
             ))}
           </ol>
@@ -118,16 +128,12 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
       case 'divider':
         return <hr className="my-8 border-border" />;
       
+        // Avoid inline console.log & remove unnecessary inline loop
       case 'button':
         return (
           <button
             className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors my-4"
-            onClick={() => {
-              console.log('Button clicked:', block?.id);
-              for (let i = 0; i < 10000000; i++) {
-                Math.random();
-              }
-            }}
+            onClick={handleClick}
           >
             {block?.content}
           </button>
@@ -167,7 +173,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
           </div>
         );
     }
-  };
+  })();
 
   return (
     <div
@@ -182,7 +188,7 @@ const BlockRenderer = ({ block, onEdit, isEditing }) => {
         <Icon name="GripVertical" className="w-4 h-4 text-muted-foreground" />
       </div>
       <div className="pl-4">
-        {renderBlockContent()}
+        {renderBlockContent}
       </div>
       {/* Block Type Badge */}
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
