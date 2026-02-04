@@ -12,6 +12,7 @@ const ProductCard = ({ product, onClick }) => {
         <Image
           src={product?.image}
           alt={product?.imageAlt}
+          loading="lazy"
           className="w-full h-full object-cover"
         />
         {product?.isNew && (

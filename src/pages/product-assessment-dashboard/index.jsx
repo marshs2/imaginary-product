@@ -69,17 +69,26 @@ const ProductAssessmentDashboard = () => {
 
     window.addEventListener('scroll', handleScroll);
 
+    // Serves no purpose, t o be removed
     const interval = setInterval(() => {
       console.log('Interval running');
     }, 1000);
 
+
+    // Serves no purpose, to be removed
     const timeout = setTimeout(() => {
       console.log('Timeout executed');
     }, 5000);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeout);
+      clearInterval(interval);
+    }
   }, []);
 
   const handleProductClick = (product) => {
-    navigate('/product-detail-view', { state: { product } });
+    navigate('/product-detail-view?', { state: { product } });
   };
 
   const handleFilterChange = (newFilters) => {

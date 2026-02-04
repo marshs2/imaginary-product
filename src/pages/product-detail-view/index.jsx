@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Header from '../../components/ui/Header';
@@ -12,14 +12,28 @@ import ProductSpecifications from './components/ProductSpecifications';
 import RelatedProducts from './components/RelatedProducts';
 import CustomerReviews from './components/CustomerReviews';
 import Icon from '../../components/AppIcon';
+import { CartContext } from 'components/useCart';
 
 
 const ProductDetailView = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+
+  const { setCartItems } = useContext(CartContext);
+
+  // console.log('Products Context', context);
+
+  // Need a way to enhance the current product data to have all the product details
+  // Maybe make an API call and get it or update them in the Mocks at least.
+  // Currently its not showing the full details, hence keeping the Mock data itself
+  // useEffect(() => {
+  //   console.log(location?.state);
+  //   setProduct(location?.state?.product);
+  //   setLoading(false);
+  // }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +43,9 @@ const ProductDetailView = () => {
     window.addEventListener('scroll', handleScroll);
   }, []);
 
+  // Technically this should come from the BE based on the product clicked on the
+  // Product Details tab in the Dashboard and have mock only as a Fallback
+  // However since we don't have the full data in the FE, keeping this for now. 
   useEffect(() => {
     const loadProduct = () => {
       try {
@@ -96,6 +113,7 @@ const ProductDetailView = () => {
         };
 
         setTimeout(() => {
+          // This can at best be a fallback, and shouldn't be the default
           setProduct(mockProduct);
           setLoading(false);
         }, 100);
@@ -107,10 +125,15 @@ const ProductDetailView = () => {
     loadProduct();
   }, [location?.search]);
 
+  // Its not actually adding the data to Cart ! 
   const handleAddToCart = (configuredProduct) => {
     console.log('Adding to cart:', configuredProduct);
     // Simulate cart addition
     alert(`Added ${configuredProduct?.quantity}x ${configuredProduct?.name} to cart`);
+
+    setCartItems((prev) => {
+      return [...prev, configuredProduct];
+    })
   };
 
   const tabs = [
